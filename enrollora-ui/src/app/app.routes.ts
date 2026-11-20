@@ -34,7 +34,6 @@ export const routes: Routes = [
             (m) => m.CourseListComponent,
           ),
       },
-
       {
         path: 'enrollments',
         loadComponent: () =>
@@ -69,6 +68,11 @@ export const routes: Routes = [
           import('./features/enrollments/student/my-enrollments/my-enrollments').then(
             (m) => m.MyEnrollments,
           ),
+      },
+      {
+        path: 'profile',
+        loadComponent: () =>
+          import('./features/student/profile').then((m) => m.Profile),
       },
       {
         path: '',

@@ -7,9 +7,10 @@
 
           <form (ngSubmit)="onLogin()" #loginForm="ngForm">
             <div class="mb-3">
-              <label class="form-label">Email</label>
+              <label for="email" class="form-label">Email</label>
 
               <input
+                id="email"
                 type="email"
                 class="form-control"
                 name="email"
@@ -21,9 +22,10 @@
             </div>
 
             <div class="mb-3">
-              <label class="form-label">Password</label>
+              <label for="password" class="form-label">Password</label>
 
               <input
+                id="password"
                 type="password"
                 class="form-control"
                 name="password"
@@ -51,6 +53,12 @@
               }
             </button>
           </form>
+
+          <div class="text-center mt-3">
+            <small class="text-muted">
+              New student? <a routerLink="/register">Create an account</a>
+            </small>
+          </div>
         </div>
       </div>
     </div>
