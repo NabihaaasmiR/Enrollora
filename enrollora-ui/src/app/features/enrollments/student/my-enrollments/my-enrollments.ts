@@ -27,6 +27,14 @@ export class MyEnrollments implements OnInit {
     this.loadEnrollments();
   }
 
+  isActiveEnrollment(status: number | string): boolean {
+    return status === 0 || status === 'Active';
+  }
+
+  statusLabel(status: number | string): string {
+    return this.isActiveEnrollment(status) ? 'Active' : 'Cancelled';
+  }
+
   loadEnrollments(): void {
     this.isLoading.set(true);
     this.errorMessage.set('');
@@ -49,10 +57,6 @@ export class MyEnrollments implements OnInit {
           this.isLoading.set(false);
         },
       });
-  }
-
-  statusLabel(status: number): string {
-    return status === 1 ? 'Active' : 'Cancelled';
   }
 
   previousPage(): void {

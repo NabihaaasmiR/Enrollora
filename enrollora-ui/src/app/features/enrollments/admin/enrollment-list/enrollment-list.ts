@@ -28,6 +28,10 @@ export class EnrollmentListComponent implements OnInit {
     this.loadEnrollments();
   }
 
+  isActiveEnrollment(status: number | string): boolean {
+    return status === 0 || status === 'Active';
+  }
+
   loadEnrollments(): void {
     this.isLoading.set(true);
     this.errorMessage.set('');
