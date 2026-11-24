@@ -29,4 +29,16 @@ export interface CourseFilter {
   maxCapacity?: number | null;
 }
 
+export interface CourseFilter {
+  search?: string;
+  isActive?: boolean | null;
+  availability?: string;
+  minFees?: number | null;
+  maxFees?: number | null;
+  minCapacity?: number | null;
+  maxCapacity?: number | null;
+  sortBy?: string;
+  sortOrder?: string;
+}
+
 export type CoursePagedResult = PagedResult<CourseResponse>;
