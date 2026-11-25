@@ -1,8 +1,11 @@
+
 .enrollment-page {
   padding: 24px;
   color: #29213d;
+  min-height: 100%;
 }
 
+/* Page Header */
 .page-header {
   display: flex;
   justify-content: space-between;
@@ -34,6 +37,7 @@
   font-size: 25px;
 }
 
+/* Summary Card */
 .summary-card {
   display: flex;
   align-items: center;
@@ -69,33 +73,203 @@
   margin: 3px 0 0;
 }
 
+/* Filter Card */
+.filter-card {
+  background: white;
+  padding: 24px;
+  border-radius: 16px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 18px rgba(40, 20, 70, 0.06);
+}
+
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 22px;
+}
+
+.filter-header h4 {
+  font-size: 17px;
+  font-weight: 750;
+  margin-bottom: 5px;
+  color: #332849;
+}
+
+.filter-header h4 i {
+  color: #7544d8;
+  margin-right: 7px;
+}
+
+.filter-header p {
+  color: #91899d;
+  font-size: 13px;
+  margin: 0;
+}
+
+.filter-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filter-group label {
+  font-size: 13px;
+  font-weight: 650;
+  color: #625873;
+}
+
+.filter-group .form-control,
+.filter-group .form-select {
+  min-height: 43px;
+  border: 1px solid #e8e3ef;
+  border-radius: 9px;
+  font-size: 13px;
+  color: #403650;
+  box-shadow: none;
+}
+
+.filter-group .form-control:focus,
+.filter-group .form-select:focus {
+  border-color: #9270dc;
+  box-shadow: 0 0 0 3px rgba(117, 68, 216, 0.09);
+}
+
+.input-wrapper {
+  position: relative;
+}
+
+.input-wrapper > i {
+  position: absolute;
+  left: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #91899d;
+  z-index: 1;
+}
+
+.input-wrapper input {
+  padding-left: 38px;
+}
+
+/* Filter Actions */
+.filter-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 23px;
+}
+
+.filter-actions button {
+  padding: 10px 17px;
+  font-size: 13px;
+  font-weight: 650;
+  border-radius: 9px;
+}
+
+.apply-btn {
+  background: #7544d8;
+  border-color: #7544d8;
+}
+
+.apply-btn:hover {
+  background: #6033bd;
+  border-color: #6033bd;
+}
+
+.reset-btn {
+  border-color: #e3deea;
+  color: #625873;
+}
+
+/* Table Container */
 .table-container {
   background: white;
   border-radius: 16px;
-  padding: 10px 20px;
+  padding: 20px;
   box-shadow: 0 4px 18px rgba(40, 20, 70, 0.06);
-  overflow-x: auto;
 }
 
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.table-header h4 {
+  font-size: 17px;
+  font-weight: 750;
+  margin-bottom: 5px;
+}
+
+.table-header p {
+  color: #91899d;
+  font-size: 13px;
+  margin: 0;
+}
+
+.record-label {
+  background: #f4f0fc;
+  color: #7544d8;
+  padding: 8px 13px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+/* Table */
 .table {
   margin: 0;
   min-width: 700px;
 }
 
 .table thead th {
+  background: #faf9fc;
   color: #827a91;
   font-size: 13px;
   font-weight: 700;
-  padding: 18px 12px;
+  padding: 16px 12px;
   border-bottom: 1px solid #eeeaf3;
+  white-space: nowrap;
 }
 
 .table tbody td {
   padding: 17px 12px;
   border-bottom: 1px solid #f1eef5;
   font-size: 14px;
+  vertical-align: middle;
 }
 
+.table tbody tr:hover {
+  background: #fcfbff;
+}
+
+.sort-button {
+  border: none;
+  background: transparent;
+  color: #827a91;
+  font: inherit;
+  font-weight: 700;
+  padding: 0;
+  cursor: pointer;
+}
+
+.sort-button i {
+  margin-left: 5px;
+  color: #a39bad;
+}
+
+.sort-button:hover {
+  color: #7544d8;
+}
+
+/* Student Details */
 .student-info {
   display: flex;
   align-items: center;
@@ -113,6 +287,7 @@
   justify-content: center;
   font-weight: 800;
   font-size: 17px;
+  flex-shrink: 0;
 }
 
 .student-name,
@@ -126,14 +301,31 @@
   display: block;
   color: #91899d;
   font-size: 12px;
-  margin-top: 3px;
+  margin-top: 4px;
 }
 
+.date-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #625873;
+  white-space: nowrap;
+}
+
+.date-info i {
+  color: #9271d7;
+}
+
+/* Status */
 .status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   padding: 7px 13px;
   border-radius: 20px;
   font-size: 12px;
   font-weight: 700;
+  white-space: nowrap;
 }
 
 .status-badge.active {
@@ -146,6 +338,14 @@
   color: #dc6541;
 }
 
+.status-dot {
+  width: 7px;
+  height: 7px;
+  background: currentColor;
+  border-radius: 50%;
+}
+
+/* Loading and Empty States */
 .state-message,
 .empty-state {
   text-align: center;
@@ -153,10 +353,26 @@
   color: #91899d;
 }
 
-.empty-state i {
-  font-size: 32px;
+.state-message p {
+  margin-top: 12px;
 }
 
+.empty-state i {
+  font-size: 36px;
+  color: #b4a9c8;
+}
+
+.empty-state h5 {
+  color: #443754;
+  font-weight: 700;
+  margin-top: 12px;
+}
+
+.empty-state p {
+  font-size: 13px;
+}
+
+/* Pagination */
 .pagination-container {
   display: flex;
   justify-content: space-between;
@@ -173,15 +389,59 @@
   gap: 14px;
 }
 
-.pagination-actions button {
+.pagination-btn {
+  border: 1px solid #e5e0ed;
+  background: white;
+  color: #625873;
   border-radius: 9px;
   font-size: 13px;
-  padding: 8px 14px;
+  padding: 9px 14px;
+  cursor: pointer;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  border-color: #7544d8;
+  color: #7544d8;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.page-number {
+  font-weight: 650;
+  color: #514461;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .filter-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 650px) {
   .enrollment-page {
     padding: 14px;
+  }
+
+  .page-header h2 {
+    font-size: 21px;
+  }
+
+  .filter-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-actions {
+    flex-wrap: wrap;
+  }
+
+  .table-header {
+    align-items: flex-start;
+    gap: 10px;
+    flex-direction: column;
   }
 
   .pagination-container {
@@ -192,5 +452,6 @@
   .pagination-actions {
     width: 100%;
     justify-content: space-between;
+    gap: 7px;
   }
 }

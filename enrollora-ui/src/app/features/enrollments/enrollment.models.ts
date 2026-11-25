@@ -1,3 +1,4 @@
+
 import { PagedResult } from '../../shared/models/paged-result.model';
 
 export interface EnrollmentResponse {
@@ -21,6 +22,9 @@ export interface EnrollmentFilter {
   status?: number | null;
   fromDate?: string;
   toDate?: string;
+  sortBy?: string;
+  sortOrder?: string;
 }
 
-export type EnrollmentPagedResult = PagedResult<EnrollmentResponse>;
+export type EnrollmentPagedResult =
+  PagedResult<EnrollmentResponse>;

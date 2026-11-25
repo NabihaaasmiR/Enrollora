@@ -1,138 +1,172 @@
+
 <div class="students-page">
-  <div class="page-heading">
+
+  <!-- Page Header -->
+  <header class="page-header">
     <div>
-      <h2>Students</h2>
-      <p>Manage student registrations and approvals.</p>
+      <span class="page-eyebrow">ADMINISTRATION</span>
+      <h1>Student Management</h1>
+      <p>Manage student registrations, profiles and course enrollments.</p>
     </div>
 
-    <div class="student-count">Total Students: {{ totalRecords }}</div>
-  </div>
+    <div class="header-total">
+      <span class="total-icon"><i class="bi bi-people"></i></span>
+      <div>
+        <strong>{{ totalRecords }}</strong>
+        <small>Total students</small>
+      </div>
+    </div>
+  </header>
 
-  @if (isLoading) {
-    <div class="loading-state">
-      <div class="spinner-border text-primary"></div>
-      <p>Loading students...</p>
+  <!-- Overview -->
+  <section class="overview-grid">
+    <article class="overview-card">
+      <div class="overview-icon purple"><i class="bi bi-people"></i></div>
+      <div>
+        <span>Total Students</span>
+        <strong>{{ totalRecords }}</strong>
+        <small>Registered students</small>
+      </div>
+    </article>
+
+    <article class="overview-card">
+      <div class="overview-icon blue"><i class="bi bi-eye"></i></div>
+      <div>
+        <span>Showing</span>
+        <strong>{{ students.length }}</strong>
+        <small>On this page</small>
+      </div>
+    </article>
+
+    <article class="overview-card">
+      <div class="overview-icon green"><i class="bi bi-check-circle"></i></div>
+      <div>
+        <span>Current Page</span>
+        <strong>{{ pageNumber }}</strong>
+        <small>Of {{ totalPages || 1 }} pages</small>
+      </div>
+    </article>
+  </section>
+
+  <!-- Main Content -->
+  <section class="content-card">
+
+    <div class="content-heading">
+      <div>
+        <h2>All Students</h2>
+        <p>Search, filter and manage student records.</p>
+      </div>
+      <span class="record-count">{{ totalRecords }} records</span>
     </div>
-  } @else if (errorMessage) {
-    <div class="alert alert-danger">
-      {{ errorMessage }}
-      <button class="btn btn-sm btn-outline-danger ms-3" (click)="loadStudents()">Retry</button>
-    </div>
-  } @else {
-    <div class="table-card">
-      <!-- Student Filters -->
-      <div class="student-filter-card">
-        <div class="filter-header">
-          <div>
-            <h5>Filter Students</h5>
-            <p>Find students using search and filter criteria</p>
-          </div>
-          <span class="filter-icon">☷</span>
+
+    <!-- Filters -->
+    <div class="filter-panel">
+      <div class="filter-title">
+        <div>
+          <i class="bi bi-funnel"></i>
+          <strong>Filters</strong>
         </div>
+        <button type="button" class="text-button" (click)="clearFilters()">
+          <i class="bi bi-arrow-counterclockwise"></i> Clear all
+        </button>
+      </div>
 
-        <div class="row g-3">
-          <!-- Search -->
-          <div class="col-lg-4 col-md-6">
-            <label class="form-label">Search</label>
+      <div class="filter-grid">
+        <div class="filter-field search-field">
+          <label>Search students</label>
+          <div class="search-input">
+            <i class="bi bi-search"></i>
             <input
               type="text"
-              class="form-control"
-              placeholder="Search by name or email"
+              placeholder="Name or email address"
               [(ngModel)]="filters.search"
-            />
-          </div>
-
-          <!-- Status -->
-          <div class="col-lg-2 col-md-6">
-            <label class="form-label">Status</label>
-            <select class="form-select" [(ngModel)]="filters.status">
-              <option [ngValue]="null">All Statuses</option>
-              <option [ngValue]="0">Pending</option>
-              <option [ngValue]="1">Approved</option>
-              <option [ngValue]="2">Rejected</option>
-            </select>
-          </div>
-
-          <!-- Department -->
-          <div class="col-lg-2 col-md-6">
-            <label class="form-label">Department</label>
-            <select class="form-select" [(ngModel)]="filters.department">
-              <option value="">All Departments</option>
-              <option value="CSE">CSE</option>
-              <option value="ECE">ECE</option>
-              <option value="EEE">EEE</option>
-              <option value="IT">IT</option>
-              <option value="Mechanical">Mechanical</option>
-            </select>
-          </div>
-
-          <!-- Age Range -->
-          <div class="col-lg-2 col-md-6">
-            <label class="form-label">Age Range</label>
-            <div class="range-inputs">
-              <input
-                type="number"
-                class="form-control"
-                placeholder="Min"
-                [(ngModel)]="filters.minAge"
-              />
-              <input
-                type="number"
-                class="form-control"
-                placeholder="Max"
-                [(ngModel)]="filters.maxAge"
-              />
-            </div>
-          </div>
-
-          <!-- CGPA Range -->
-          <div class="col-lg-2 col-md-6">
-            <label class="form-label">CGPA Range</label>
-            <div class="range-inputs">
-              <input
-                type="number"
-                class="form-control"
-                placeholder="Min"
-                min="0"
-                max="10"
-                step="0.1"
-                [(ngModel)]="filters.minCgpa"
-              />
-              <input
-                type="number"
-                class="form-control"
-                placeholder="Max"
-                min="0"
-                max="10"
-                step="0.1"
-                [(ngModel)]="filters.maxCgpa"
-              />
-            </div>
+              (keyup.enter)="applyFilters()">
           </div>
         </div>
 
-        <div class="filter-footer">
-          <button class="btn btn-apply" (click)="applyFilters()">Apply Filters</button>
+        <div class="filter-field">
+          <label>Registration status</label>
+          <select [(ngModel)]="filters.status">
+            <option [ngValue]="null">All statuses</option>
+            <option [ngValue]="0">Pending</option>
+            <option [ngValue]="1">Approved</option>
+            <option [ngValue]="2">Rejected</option>
+          </select>
+        </div>
 
-          <button class="btn btn-reset" (click)="clearFilters()">
-            <i class="bi bi-arrow-counterclockwise"></i>
-            Reset
-          </button>
+        <div class="filter-field">
+          <label>Department</label>
+          <select [(ngModel)]="filters.department">
+            <option value="">All departments</option>
+            <option value="CSE">CSE</option>
+            <option value="ECE">ECE</option>
+            <option value="EEE">EEE</option>
+            <option value="IT">IT</option>
+            <option value="Mechanical">Mechanical</option>
+          </select>
+        </div>
+
+        <div class="filter-field">
+          <label>Age range</label>
+          <div class="range-fields">
+            <input type="number" placeholder="Min"
+              [(ngModel)]="filters.minAge">
+            <input type="number" placeholder="Max"
+              [(ngModel)]="filters.maxAge">
+          </div>
+        </div>
+
+        <div class="filter-field">
+          <label>CGPA range</label>
+          <div class="range-fields">
+            <input type="number" placeholder="Min" min="0" max="10" step="0.1"
+              [(ngModel)]="filters.minCgpa">
+            <input type="number" placeholder="Max" min="0" max="10" step="0.1"
+              [(ngModel)]="filters.maxCgpa">
+          </div>
         </div>
       </div>
 
-      <!-- Student Table -->
-      <div class="table-responsive">
-        <table class="table align-middle mb-0">
+      <div class="filter-actions">
+        <button type="button" class="primary-button" (click)="applyFilters()">
+          <i class="bi bi-search"></i> Apply filters
+        </button>
+        <button type="button" class="secondary-button" (click)="clearFilters()">
+          Reset
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    @if (isLoading) {
+      <div class="state-container">
+        <div class="spinner-border text-primary"></div>
+        <strong>Loading students</strong>
+        <span>Please wait while we retrieve the records.</span>
+      </div>
+    } @else if (errorMessage) {
+      <div class="error-state">
+        <i class="bi bi-exclamation-circle"></i>
+        <div>
+          <strong>Unable to load students</strong>
+          <p>{{ errorMessage }}</p>
+        </div>
+        <button class="secondary-button" (click)="loadStudents()">Retry</button>
+      </div>
+    } @else {
+
+      <!-- Table -->
+      <div class="table-container">
+        <table class="students-table">
           <thead>
             <tr>
-              <th>Student</th>
-              <th>Department</th>
-              <th>Age</th>
+              <th>STUDENT</th>
+              <th>DEPARTMENT</th>
+              <th>AGE</th>
               <th>CGPA</th>
-              <th>Status</th>
-              <th>Registered Date</th>
-              <th>Action</th>
+              <th>STATUS</th>
+              <th>REGISTERED</th>
+              <th class="actions-heading">ACTIONS</th>
             </tr>
           </thead>
 
@@ -140,320 +174,424 @@
             @for (student of students; track student.studentId) {
               <tr>
                 <td>
-                  <div class="student-info">
+                  <div class="student-cell">
                     <div class="student-avatar">
                       {{ student.name.charAt(0).toUpperCase() }}
                     </div>
-
-                    <div>
+                    <div class="student-identity">
                       <strong>{{ student.name }}</strong>
-                      <small>{{ student.email }}</small>
+                      <span>{{ student.email }}</span>
+                      <small>ID: #{{ student.studentId }}</small>
                     </div>
                   </div>
                 </td>
 
-                <td>{{ student.department }}</td>
-                <td>{{ student.age }}</td>
-                <td>{{ student.cgpa | number: '1.2-2' }}</td>
+                <td>
+                  <span class="department-tag">{{ student.department }}</span>
+                </td>
+
+                <td>{{ student.age }} yrs</td>
 
                 <td>
-                  <span
-                    class="status-badge"
+                  <span class="cgpa-value">
+                    {{ student.cgpa | number:'1.2-2' }}
+                  </span>
+                </td>
+
+                <td>
+                  <span class="status-badge"
                     [class.pending]="student.status === 0"
                     [class.approved]="student.status === 1"
-                    [class.rejected]="student.status === 2"
-                  >
+                    [class.rejected]="student.status === 2">
+                    <span class="status-dot"></span>
                     {{
-                      student.status === 0
-                        ? 'Pending'
-                        : student.status === 1
-                          ? 'Approved'
-                          : student.status === 2
-                            ? 'Rejected'
-                            : 'Unknown'
+                      student.status === 0 ? 'Pending' :
+                      student.status === 1 ? 'Approved' :
+                      student.status === 2 ? 'Rejected' : 'Unknown'
                     }}
                   </span>
                 </td>
 
-                <td>{{ student.registeredAt | date: 'dd MMM yyyy' }}</td>
+                <td class="date-cell">
+                  {{ student.registeredAt | date:'dd MMM yyyy' }}
+                </td>
 
-                <!-- Actions -->
                 <td>
-                  <div class="d-flex gap-2 flex-wrap">
-                    <button
-                      class="btn btn-sm btn-outline-primary"
-                      (click)="viewStudent(student.studentId)"
-                    >
-                      View
+                  <div class="action-buttons">
+                    <button type="button" class="icon-button view-action"
+                      title="View profile"
+                      (click)="viewStudent(student.studentId)">
+                      <i class="bi bi-eye"></i>
                     </button>
 
-                    <button
-                      class="btn btn-sm btn-outline-secondary"
-                      (click)="editStudent(student.studentId)"
-                    >
-                      Edit
+                    <button type="button" class="icon-button history-action"
+                      title="Enrollment history"
+                      (click)="viewEnrollmentHistory(student)">
+                      <i class="bi bi-clock-history"></i>
                     </button>
 
-                    <button
-                      class="btn btn-sm btn-outline-danger"
-                      (click)="deleteStudent(student.studentId)"
-                    >
-                      Delete
+                    <button type="button" class="icon-button edit-action"
+                      title="Edit student"
+                      (click)="editStudent(student.studentId)">
+                      <i class="bi bi-pencil"></i>
+                    </button>
+
+                    <button type="button" class="icon-button delete-action"
+                      title="Delete student"
+                      (click)="deleteStudent(student.studentId)">
+                      <i class="bi bi-trash3"></i>
                     </button>
 
                     @if (student.status === 0) {
-                      <button
-                        class="btn btn-sm btn-success"
-                        (click)="approveStudent(student.studentId)"
-                      >
+                      <button type="button" class="approve-button"
+                        (click)="approveStudent(student.studentId)">
                         Approve
                       </button>
-
-                      <button
-                        class="btn btn-sm btn-outline-danger"
-                        (click)="rejectStudent(student.studentId)"
-                      >
+                      <button type="button" class="reject-button"
+                        (click)="rejectStudent(student.studentId)">
                         Reject
                       </button>
-                    } @else {
-                      <span class="text-muted align-self-center">Reviewed</span>
                     }
                   </div>
                 </td>
               </tr>
             } @empty {
               <tr>
-                <td colspan="7" class="empty-state">No students found.</td>
+                <td colspan="7">
+                  <div class="empty-state">
+                    <i class="bi bi-people"></i>
+                    <strong>No students found</strong>
+                    <span>Try changing your search or filter criteria.</span>
+                    <button class="text-button" (click)="clearFilters()">Clear filters</button>
+                  </div>
+                </td>
               </tr>
             }
           </tbody>
         </table>
       </div>
-    </div>
 
-    <!-- Pagination -->
-    <div class="pagination-container">
-      <div class="pagination-info">
-        Showing {{ students.length }} of {{ totalRecords }} students
-      </div>
+      <!-- Pagination -->
+      <footer class="table-footer">
+        <div class="pagination-summary">
+          Showing <strong>{{ students.length }}</strong> of
+          <strong>{{ totalRecords }}</strong> students
+        </div>
 
-      <div class="page-size-selector">
-        <label for="pageSize">Rows per page:</label>
+        <div class="pagination-settings">
+          <label for="pageSize">Rows per page</label>
+          <select #pageselect id="pageSize"
+            [value]="pageSize"
+            (change)="changePageSize(pageselect.value)">
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+          </select>
+        </div>
 
-        <select
-          #pageselect
-          id="pageSize"
-          class="form-select form-select-sm"
-          [value]="pageSize"
-          (change)="changePageSize(pageselect.value)"
-        >
-          <option value="5">5</option>
-          <option value="10">10</option>
-          <option value="20">20</option>
-          <option value="50">50</option>
-        </select>
-      </div>
+        <div class="pagination-controls">
+          <button type="button" [disabled]="pageNumber <= 1 || isLoading"
+            (click)="goToPreviousPage()">
+            <i class="bi bi-chevron-left"></i>
+          </button>
 
-      <div class="pagination-controls">
-        <button
-          class="btn btn-outline-primary btn-sm"
-          [disabled]="pageNumber === 1 || isLoading"
-          (click)="goToPreviousPage()"
-        >
-          Previous
-        </button>
+          <span>Page <strong>{{ pageNumber }}</strong> of {{ totalPages || 1 }}</span>
 
-        <span class="page-indicator"> Page {{ pageNumber }} of {{ totalPages }} </span>
-
-        <button
-          class="btn btn-outline-primary btn-sm"
-          [disabled]="pageNumber === totalPages || isLoading"
-          (click)="goToNextPage()"
-        >
-          Next
-        </button>
-      </div>
-    </div>
-  }
+          <button type="button"
+            [disabled]="pageNumber >= totalPages || isLoading"
+            (click)="goToNextPage()">
+            <i class="bi bi-chevron-right"></i>
+          </button>
+        </div>
+      </footer>
+    }
+  </section>
 </div>
 
-<!-- Student Details Modal -->
-@if (selectedStudent || isDetailsLoading || detailsError) {
-  <div class="student-modal-backdrop">
-    <div class="student-modal">
-      <!-- Modal Header -->
-      <div class="student-modal-header">
-        <div>
-          <span class="modal-eyebrow">STUDENT PROFILE</span>
-          <h3>Student Details</h3>
-          <p>Registration information and academic profile</p>
-        </div>
 
-        <button
-          type="button"
-          class="modal-close"
-          aria-label="Close"
-          (click)="selectedStudent = null; detailsError = ''"
-        >
+<!-- STUDENT PROFILE MODAL -->
+@if (selectedStudent || isDetailsLoading || detailsError) {
+  <div class="modal-overlay" (click)="selectedStudent = null; detailsError = ''">
+    <section class="app-modal profile-modal" role="dialog" aria-modal="true"
+      aria-labelledby="profileTitle" (click)="$event.stopPropagation()">
+
+      <header class="modal-header">
+        <div>
+          <span class="modal-eyebrow">STUDENT RECORD</span>
+          <h2 id="profileTitle">Student Profile</h2>
+          <p>Personal and academic information</p>
+        </div>
+        <button class="modal-close" (click)="selectedStudent = null; detailsError = ''">
           &times;
         </button>
-      </div>
+      </header>
 
-      <!-- Loading -->
       @if (isDetailsLoading) {
-        <div class="modal-loading">
+        <div class="state-container">
           <div class="spinner-border text-primary"></div>
-          <p>Loading student profile...</p>
+          <span>Loading student details...</span>
         </div>
-      }
-
-      <!-- Error -->
-      @else if (detailsError) {
-        <div class="alert alert-danger m-4">
-          {{ detailsError }}
+      } @else if (detailsError) {
+        <div class="modal-content-area">
+          <div class="error-state">{{ detailsError }}</div>
         </div>
-      }
-
-      <!-- Student Information -->
-      @else if (selectedStudent) {
-        <div class="student-modal-body">
-          <!-- Profile -->
-          <div class="profile-section">
+      } @else if (selectedStudent) {
+        <div class="modal-content-area">
+          <div class="profile-banner">
             <div class="profile-avatar">
               {{ selectedStudent.name.charAt(0).toUpperCase() }}
             </div>
-
-            <div class="profile-info">
-              <h2>{{ selectedStudent.name }}</h2>
+            <div>
+              <h3>{{ selectedStudent.name }}</h3>
               <p>{{ selectedStudent.email }}</p>
-              <span
-                class="profile-status"
+              <span class="status-badge"
                 [class.pending]="selectedStudent.status === 0"
                 [class.approved]="selectedStudent.status === 1"
-                [class.rejected]="selectedStudent.status === 2"
-              >
+                [class.rejected]="selectedStudent.status === 2">
                 {{
-                  selectedStudent.status === 0
-                    ? 'Pending Approval'
-                    : selectedStudent.status === 1
-                      ? 'Approved'
-                      : 'Rejected'
+                  selectedStudent.status === 0 ? 'Pending' :
+                  selectedStudent.status === 1 ? 'Approved' : 'Rejected'
                 }}
               </span>
             </div>
           </div>
 
-          <!-- Academic Highlights -->
-          <div class="academic-highlights">
-            <div class="highlight-card cgpa-card">
-              <span>CGPA</span>
-              <strong>{{ selectedStudent.cgpa | number: '1.2-2' }}</strong>
-              <small>Academic Performance</small>
-            </div>
-
-            <div class="highlight-card department-card">
-              <span>DEPARTMENT</span>
-              <strong>{{ selectedStudent.department }}</strong>
-              <small>Academic Branch</small>
-            </div>
-
-            <div class="highlight-card age-card">
-              <span>AGE</span>
-              <strong>{{ selectedStudent.age }}</strong>
-              <small>Years old</small>
-            </div>
-          </div>
-
-          <!-- Registration Information -->
-          <div class="details-section">
-            <h5>Registration Information</h5>
-
-            <div class="detail-row">
+          <div class="profile-info-grid">
+            <div class="info-tile">
               <span>Student ID</span>
               <strong>#{{ selectedStudent.studentId }}</strong>
             </div>
-
-            <div class="detail-row">
-              <span>Registered On</span>
-              <strong>
-                {{ selectedStudent.registeredAt | date: 'dd MMM yyyy' }}
-              </strong>
+            <div class="info-tile">
+              <span>Department</span>
+              <strong>{{ selectedStudent.department }}</strong>
             </div>
-
-            <div class="detail-row">
+            <div class="info-tile">
+              <span>Age</span>
+              <strong>{{ selectedStudent.age }} years</strong>
+            </div>
+            <div class="info-tile">
+              <span>CGPA</span>
+              <strong>{{ selectedStudent.cgpa | number:'1.2-2' }} / 10</strong>
+            </div>
+            <div class="info-tile">
+              <span>Registered On</span>
+              <strong>{{ selectedStudent.registeredAt | date:'dd MMM yyyy' }}</strong>
+            </div>
+            <div class="info-tile">
               <span>Reviewed On</span>
               <strong>
-                {{
-                  selectedStudent.reviewedAt
-                    ? (selectedStudent.reviewedAt | date: 'dd MMM yyyy')
-                    : 'Not reviewed yet'
-                }}
+                {{ selectedStudent.reviewedAt
+                  ? (selectedStudent.reviewedAt | date:'dd MMM yyyy')
+                  : 'Not reviewed' }}
               </strong>
             </div>
           </div>
         </div>
-
-        <!-- Footer -->
-        <div class="student-modal-footer">
-          <button class="btn-close-modal" (click)="selectedStudent = null">Close Profile</button>
-        </div>
+        <footer class="modal-footer">
+          <button class="secondary-button" (click)="selectedStudent = null">
+            Close
+          </button>
+        </footer>
       }
-    </div>
+    </section>
   </div>
 }
 
-<!-- Edit Student Modal -->
+
+<!-- EDIT STUDENT MODAL -->
 @if (isEditModalOpen) {
-  <div class="student-modal-backdrop">
-    <div class="student-modal">
-      <div class="student-modal-header">
+  <div class="modal-overlay" (click)="closeEditModal()">
+    <section class="app-modal edit-modal" role="dialog" aria-modal="true"
+      aria-labelledby="editTitle" (click)="$event.stopPropagation()">
+
+      <header class="modal-header">
         <div>
           <span class="modal-eyebrow">STUDENT MANAGEMENT</span>
-          <h3>Edit Student</h3>
-          <p>Update student information</p>
+          <h2 id="editTitle">Edit Student</h2>
+          <p>Update the student's information.</p>
         </div>
+        <button class="modal-close" (click)="closeEditModal()">&times;</button>
+      </header>
 
-        <button type="button" class="modal-close" (click)="closeEditModal()">&times;</button>
-      </div>
-
-      <div class="student-modal-body">
+      <div class="modal-content-area">
         <form [formGroup]="studentForm" (ngSubmit)="updateStudent()">
-          <div class="mb-3">
-            <label class="form-label">Student Name</label>
-            <input type="text" class="form-control" formControlName="name" />
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label">Email</label>
-            <input type="email" class="form-control" formControlName="email" />
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label">Department</label>
-            <input type="text" class="form-control" formControlName="department" />
-          </div>
-
-          <div class="row">
-            <div class="col-6 mb-3">
-              <label class="form-label">Age</label>
-              <input type="number" class="form-control" formControlName="age" />
+          <div class="form-grid">
+            <div class="form-field full-width">
+              <label>Full name</label>
+              <input type="text" formControlName="name" placeholder="Enter student name">
+              @if (studentForm.controls.name.touched && studentForm.controls.name.invalid) {
+                <small class="validation-error">Name is required.</small>
+              }
             </div>
 
-            <div class="col-6 mb-3">
-              <label class="form-label">CGPA</label>
-              <input type="number" class="form-control" step="0.01" formControlName="cgpa" />
+            <div class="form-field full-width">
+              <label>Email address</label>
+              <input type="email" formControlName="email" placeholder="Enter email address">
+              @if (studentForm.controls.email.touched && studentForm.controls.email.invalid) {
+                <small class="validation-error">Enter a valid email address.</small>
+              }
+            </div>
+
+            <div class="form-field full-width">
+              <label>Department</label>
+              <input type="text" formControlName="department" placeholder="Enter department">
+            </div>
+
+            <div class="form-field">
+              <label>Age</label>
+              <input type="number" formControlName="age">
+            </div>
+
+            <div class="form-field">
+              <label>CGPA</label>
+              <input type="number" step="0.01" min="0" max="10" formControlName="cgpa">
             </div>
           </div>
 
-          <div class="student-modal-footer">
-            <button type="button" class="btn btn-light" (click)="closeEditModal()">Cancel</button>
-
-            <button type="submit" class="btn-close-modal" [disabled]="studentForm.invalid">
-              Update Student
+          <div class="modal-footer">
+            <button type="button" class="secondary-button" (click)="closeEditModal()">
+              Cancel
+            </button>
+            <button type="submit" class="primary-button" [disabled]="studentForm.invalid">
+              <i class="bi bi-check2"></i> Save changes
             </button>
           </div>
         </form>
       </div>
-    </div>
+    </section>
+  </div>
+}
+
+
+<!-- ENROLLMENT HISTORY MODAL -->
+@if (isHistoryModalOpen && selectedHistoryStudent) {
+  <div class="modal-overlay" (click)="closeEnrollmentHistory()">
+    <section class="app-modal history-modal" role="dialog" aria-modal="true"
+      aria-labelledby="historyTitle" (click)="$event.stopPropagation()">
+
+      <header class="modal-header">
+        <div>
+          <span class="modal-eyebrow">STUDENT RECORDS</span>
+          <h2 id="historyTitle">Enrollment History</h2>
+          <p>Courses enrolled by this student.</p>
+        </div>
+        <button class="modal-close" (click)="closeEnrollmentHistory()">&times;</button>
+      </header>
+
+      <div class="modal-content-area">
+        <div class="history-student">
+          <div class="profile-avatar">
+            {{ selectedHistoryStudent.name.charAt(0).toUpperCase() }}
+          </div>
+          <div>
+            <strong>{{ selectedHistoryStudent.name }}</strong>
+            <span>{{ selectedHistoryStudent.email }}</span>
+            <small>Student ID: #{{ selectedHistoryStudent.studentId }}</small>
+          </div>
+        </div>
+
+        @if (isHistoryLoading && enrollmentHistory.length === 0) {
+          <div class="state-container">
+            <div class="spinner-border text-primary"></div>
+            <span>Loading enrollment history...</span>
+          </div>
+        } @else if (historyError) {
+          <div class="error-state">
+            <span>{{ historyError }}</span>
+            <button class="secondary-button" (click)="loadEnrollmentHistory()">Retry</button>
+          </div>
+        } @else {
+          <div class="history-stats">
+            <div>
+              <span>Total enrollments</span>
+              <strong>{{ historyTotalRecords }}</strong>
+            </div>
+            <div>
+              <span>Active on this page</span>
+              <strong>{{ activeEnrollmentCount }}</strong>
+            </div>
+            <div>
+              <span>Cancelled on this page</span>
+              <strong>{{ cancelledEnrollmentCount }}</strong>
+            </div>
+          </div>
+
+          <div class="history-heading">
+            <div>
+              <h3>Course records</h3>
+              <p>{{ historyTotalRecords }} enrollment record(s)</p>
+            </div>
+            @if (isHistoryLoading) {
+              <span class="updating-label">Updating...</span>
+            }
+          </div>
+
+          <div class="history-table-scroll">
+            <table class="students-table history-table">
+              <thead>
+                <tr>
+                  <th>COURSE</th>
+                  <th>ENROLLED ON</th>
+                  <th>STATUS</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (enrollment of enrollmentHistory; track enrollment.enrollmentId) {
+                  <tr>
+                    <td>
+                      <div class="course-cell">
+                        <span class="course-icon"><i class="bi bi-book"></i></span>
+                        <div>
+                          <strong>{{ enrollment.courseName }}</strong>
+                          <small>Course #{{ enrollment.courseId }}</small>
+                        </div>
+                      </div>
+                    </td>
+                    <td>{{ enrollment.enrolledAt | date:'dd MMM yyyy' }}</td>
+                    <td>
+                      <span class="status-badge"
+                        [class.approved]="isActiveEnrollment(enrollment.status)"
+                        [class.rejected]="!isActiveEnrollment(enrollment.status)">
+                        <span class="status-dot"></span>
+                        {{ isActiveEnrollment(enrollment.status) ? 'Active' : 'Cancelled' }}
+                      </span>
+                    </td>
+                  </tr>
+                } @empty {
+                  <tr>
+                    <td colspan="3">
+                      <div class="empty-state">
+                        <i class="bi bi-journal-x"></i>
+                        <strong>No enrollment records</strong>
+                        <span>This student has not enrolled in any courses yet.</span>
+                      </div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+          @if (historyTotalRecords > 0) {
+            <div class="history-pagination">
+              <span>Page {{ historyPageNumber }} of {{ historyTotalPages }}</span>
+              <div>
+                <button class="secondary-button"
+                  [disabled]="historyPageNumber <= 1 || isHistoryLoading"
+                  (click)="previousHistoryPage()">Previous</button>
+                <button class="secondary-button"
+                  [disabled]="historyPageNumber >= historyTotalPages || isHistoryLoading"
+                  (click)="nextHistoryPage()">Next</button>
+              </div>
+            </div>
+          }
+        }
+      </div>
+
+      <footer class="modal-footer">
+        <button class="secondary-button" (click)="closeEnrollmentHistory()">Close</button>
+      </footer>
+    </section>
   </div>
 }
