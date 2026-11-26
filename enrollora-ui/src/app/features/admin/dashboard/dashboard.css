@@ -1,161 +1,237 @@
 
 :host {
   display: block;
+  color: #302942;
 }
 
 .dashboard {
+  width: 100%;
   max-width: 1500px;
   margin: 0 auto;
+  padding: 8px 4px 30px;
 }
+
+/* Header */
 
 .dashboard-heading {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 20px;
   margin-bottom: 32px;
 }
 
 .dashboard-heading h2 {
-  font-size: 25px;
-  font-weight: 700;
-  color: #172554;
-  margin-bottom: 6px;
+  color: #302942;
+  font-size: 27px;
+  font-weight: 800;
+  letter-spacing: -0.7px;
+  margin: 7px 0;
 }
 
 .dashboard-heading p {
-  color: #64748b;
+  color: #898397;
   font-size: 14px;
   margin: 0;
 }
 
 .dashboard-status {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  background: #ecfdf5;
-  color: #047857;
-  padding: 8px 13px;
-  border-radius: 20px;
+  gap: 9px;
+  background: #e9f8ef;
+  color: #16834a;
+  padding: 9px 15px;
+  border-radius: 30px;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
+  white-space: nowrap;
 }
 
 .status-dot {
-  width: 7px;
-  height: 7px;
-  background: #10b981;
+  width: 8px;
+  height: 8px;
+  background: #22a65c;
   border-radius: 50%;
+  box-shadow: 0 0 0 4px rgba(34, 166, 92, 0.12);
 }
+
+/* Section headings */
 
 .section-title {
-  color: #334155;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #403751;
   font-size: 15px;
-  font-weight: 700;
-  margin-bottom: 15px;
+  font-weight: 800;
+  letter-spacing: -0.2px;
+  margin: 28px 0 16px;
 }
 
+.section-title::before {
+  content: "";
+  width: 4px;
+  height: 18px;
+  border-radius: 5px;
+  background: #8958e8;
+}
+
+/* Statistics cards */
+
 .stat-card {
+  position: relative;
   height: 100%;
-  min-height: 155px;
+  min-height: 158px;
   background: #ffffff;
-  border: 1px solid #e8edf5;
-  border-radius: 12px;
-  padding: 20px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 1px solid #efedf4;
+  border-radius: 15px;
+  padding: 21px;
+  box-shadow: 0 3px 13px rgba(35, 25, 60, 0.035);
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+  overflow: hidden;
+}
+
+.stat-card::after {
+  content: "";
+  position: absolute;
+  width: 85px;
+  height: 85px;
+  right: -35px;
+  top: -35px;
+  border-radius: 50%;
+  background: rgba(139, 92, 246, 0.035);
 }
 
 .stat-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.07);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(35, 25, 60, 0.075);
+  border-color: #e4dcf5;
 }
 
 .stat-icon {
-  width: 38px;
-  height: 38px;
+  width: 42px;
+  height: 42px;
   display: grid;
   place-items: center;
-  border-radius: 10px;
-  font-size: 19px;
-  font-weight: 600;
-  margin-bottom: 14px;
+  border-radius: 12px;
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 17px;
 }
 
 .stat-icon.blue {
-  background: #eff6ff;
-  color: #2563eb;
+  background: #eaf1ff;
+  color: #4775cf;
 }
 
 .stat-icon.orange {
-  background: #fff7ed;
-  color: #ea580c;
+  background: #fff2e3;
+  color: #d68a28;
 }
 
 .stat-icon.green {
-  background: #ecfdf5;
-  color: #059669;
+  background: #e7f8ef;
+  color: #20975b;
 }
 
 .stat-icon.red {
-  background: #fef2f2;
-  color: #dc2626;
+  background: #fff0ed;
+  color: #dc6554;
 }
 
 .stat-icon.purple {
-  background: #f5f3ff;
-  color: #7c3aed;
+  background: #f1eaff;
+  color: #8958e8;
 }
 
 .stat-card p {
-  color: #64748b;
-  font-size: 13px;
-  font-weight: 500;
-  margin-bottom: 5px;
+  color: #898397;
+  font-size: 12px;
+  font-weight: 650;
+  margin: 0 0 6px;
 }
 
 .stat-card h3 {
-  color: #172554;
-  font-size: 28px;
-  font-weight: 700;
-  margin-bottom: 5px;
+  color: #302942;
+  font-size: 29px;
+  font-weight: 800;
+  letter-spacing: -0.8px;
+  margin: 0 0 5px;
 }
 
 .stat-card small {
-  color: #94a3b8;
+  color: #aaa4b5;
   font-size: 11px;
 }
 
+/* Academic performance */
+
 .cgpa-card {
-  background: linear-gradient(120deg, #172554, #2563eb);
-  color: #ffffff;
-  border-radius: 12px;
-  padding: 25px;
-  min-height: 145px;
+  position: relative;
+  min-height: 165px;
+  padding: 26px 28px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  overflow: hidden;
+  border-radius: 17px;
+  color: #ffffff;
+  background: linear-gradient(120deg, #7044cf 0%, #9564e9 100%);
+  box-shadow: 0 10px 25px rgba(112, 68, 207, 0.16);
+}
+
+.cgpa-card::before,
+.cgpa-card::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.cgpa-card::before {
+  width: 180px;
+  height: 180px;
+  right: 40px;
+  top: -110px;
+}
+
+.cgpa-card::after {
+  width: 130px;
+  height: 130px;
+  right: -30px;
+  bottom: -75px;
 }
 
 .cgpa-card p {
+  color: rgba(255, 255, 255, 0.85);
   font-size: 13px;
-  opacity: 0.85;
-  margin-bottom: 8px;
+  font-weight: 600;
+  margin-bottom: 9px;
 }
 
 .cgpa-card h2 {
-  font-size: 32px;
-  font-weight: 700;
-  margin-bottom: 5px;
+  color: #ffffff;
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  margin-bottom: 6px;
 }
 
 .cgpa-card small {
-  opacity: 0.75;
+  color: rgba(255, 255, 255, 0.76);
   font-size: 11px;
 }
 
 .cgpa-icon {
-  font-size: 42px;
-  opacity: 0.8;
+  position: relative;
+  z-index: 1;
+  font-size: 48px;
+  color: #ffffff;
+  opacity: 0.85;
 }
+
+/* Loading and error states */
 
 .loading-state {
   min-height: 300px;
@@ -163,26 +239,90 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  color: #64748b;
+  gap: 13px;
+  color: #898397;
+}
+
+.loading-state .spinner-border {
+  width: 32px;
+  height: 32px;
+  color: #8958e8 !important;
 }
 
 .loading-state p {
   font-size: 13px;
+  margin: 0;
+}
+
+.dashboard .alert {
+  border-radius: 12px;
+  font-size: 13px;
+  padding: 14px 17px;
+}
+
+/* Responsive */
+
+@media (max-width: 768px) {
+  .dashboard {
+    padding: 5px 0 24px;
+  }
+
+  .dashboard-heading {
+    align-items: flex-start;
+    margin-bottom: 25px;
+  }
+
+  .dashboard-heading h2 {
+    font-size: 23px;
+  }
+
+  .stat-card {
+    min-height: 145px;
+    padding: 18px;
+  }
+
+  .cgpa-card {
+    min-height: 145px;
+  }
 }
 
 @media (max-width: 576px) {
   .dashboard-heading {
-    align-items: flex-start;
-    gap: 15px;
+    flex-direction: column;
+    gap: 14px;
   }
 
   .dashboard-heading h2 {
-    font-size: 21px;
+    font-size: 22px;
   }
 
   .dashboard-status {
-    font-size: 10px;
-    white-space: nowrap;
+    font-size: 11px;
+  }
+
+  .section-title {
+    margin-top: 23px;
+  }
+
+  .stat-card h3 {
+    font-size: 26px;
+  }
+
+  .cgpa-card {
+    padding: 22px;
+  }
+
+  .cgpa-card h2 {
+    font-size: 31px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stat-card {
+    transition: none;
+  }
+
+  .stat-card:hover {
+    transform: none;
   }
 }

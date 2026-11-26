@@ -1,3 +1,4 @@
+
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, inject, signal } from '@angular/core';
@@ -23,6 +24,11 @@ export class AvailableCourses implements OnInit {
   successMessage = signal('');
   enrollmentError = signal('');
   processingCourseId = signal<number | null>(null);
+
+  // Course details modal state
+  selectedCourse = signal<CourseResponse | null>(null);
+  isDetailsLoading = signal(false);
+  detailsError = signal('');
 
   pageNumber = signal(1);
   pageSize = signal(9);
@@ -51,10 +57,37 @@ export class AvailableCourses implements OnInit {
           this.isLoading.set(false);
         },
         error: (error: HttpErrorResponse) => {
-          this.errorMessage.set(this.getErrorMessage(error, 'Unable to load courses.'));
+          this.errorMessage.set(
+            this.getErrorMessage(error, 'Unable to load courses.'),
+          );
           this.isLoading.set(false);
         },
       });
+  }
+
+  viewCourse(courseId: number): void {
+    this.selectedCourse.set(null);
+    this.detailsError.set('');
+    this.isDetailsLoading.set(true);
+
+    this.courseService.getCourseById(courseId).subscribe({
+      next: (course) => {
+        this.selectedCourse.set(course);
+        this.isDetailsLoading.set(false);
+      },
+      error: (error: HttpErrorResponse) => {
+        this.detailsError.set(
+          this.getErrorMessage(error, 'Unable to load course details.'),
+        );
+        this.isDetailsLoading.set(false);
+      },
+    });
+  }
+
+  closeCourseDetails(): void {
+    this.selectedCourse.set(null);
+    this.detailsError.set('');
+    this.isDetailsLoading.set(false);
   }
 
   enroll(course: CourseResponse): void {
@@ -66,19 +99,24 @@ export class AvailableCourses implements OnInit {
     this.successMessage.set('');
     this.enrollmentError.set('');
 
-    this.enrollmentService.createEnrollment({ courseId: course.courseId }).subscribe({
-      next: () => {
-        this.processingCourseId.set(null);
-        this.successMessage.set(`You have successfully enrolled in ${course.courseName}.`);
-        this.loadCourses();
-      },
-      error: (error: HttpErrorResponse) => {
-        this.processingCourseId.set(null);
-        this.enrollmentError.set(
-          this.getErrorMessage(error, 'Unable to enroll in this course.'),
-        );
-      },
-    });
+    this.enrollmentService
+      .createEnrollment({ courseId: course.courseId })
+      .subscribe({
+        next: () => {
+          this.processingCourseId.set(null);
+          this.successMessage.set(
+            `You have successfully enrolled in ${course.courseName}.`,
+          );
+          this.closeCourseDetails();
+          this.loadCourses();
+        },
+        error: (error: HttpErrorResponse) => {
+          this.processingCourseId.set(null);
+          this.enrollmentError.set(
+            this.getErrorMessage(error, 'Unable to enroll in this course.'),
+          );
+        },
+      });
   }
 
   previousPage(): void {
@@ -95,26 +133,36 @@ export class AvailableCourses implements OnInit {
     }
   }
 
-  private getErrorMessage(error: HttpErrorResponse, fallback: string): string {
+  private getErrorMessage(
+    error: HttpErrorResponse,
+    fallback: string,
+  ): string {
     const body = error.error;
+
     if (typeof body === 'string' && body.trim()) {
       return body;
     }
+
     if (body?.detail) {
       return body.detail;
     }
+
     if (body?.message) {
       return body.message;
     }
+
     if (body?.title) {
       return body.title;
     }
+
     if (body?.errors) {
       const messages = Object.values(body.errors).flat();
+
       if (messages.length > 0) {
         return messages.map((message) => String(message)).join(' ');
       }
     }
+
     return fallback;
   }
 }

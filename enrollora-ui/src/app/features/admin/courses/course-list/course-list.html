@@ -1,7 +1,6 @@
 
 <div class="course-page">
 
-  <!-- Page Header -->
   <div class="page-header">
     <div>
       <span class="eyebrow">COURSE MANAGEMENT</span>
@@ -44,15 +43,13 @@
       <div class="summary-icon">✓</div>
       <div>
         <span>Active Courses</span>
-        <h2>{{ courses().filter((course) => course.isActive).length }}</h2>
+        <h2>{{ courses().filter(course => course.isActive).length }}</h2>
       </div>
     </div>
   </div>
 
-  <!-- Course Table Card -->
   <div class="table-card">
 
-    <!-- Table Header -->
     <div class="table-header">
       <div>
         <h2>All Courses</h2>
@@ -62,14 +59,11 @@
       <span class="record-count">{{ totalRecords() }} courses</span>
     </div>
 
-    <!-- Course Filters -->
+    <!-- Filters -->
     <div class="course-filters">
-
       <div class="filter-heading">
-        <div>
-          <h3>Filter Courses</h3>
-          <p>Search, filter and sort your courses.</p>
-        </div>
+        <h3>Filter Courses</h3>
+        <p>Search, filter and sort your courses.</p>
       </div>
 
       <div class="filter-grid">
@@ -161,11 +155,7 @@
 
         <div class="filter-group">
           <label for="sortBy">Sort By</label>
-          <select
-            id="sortBy"
-            name="sortBy"
-            [(ngModel)]="filters.sortBy"
-          >
+          <select id="sortBy" name="sortBy" [(ngModel)]="filters.sortBy">
             <option value="name">Course Name</option>
             <option value="fees">Fees</option>
             <option value="duration">Duration</option>
@@ -175,11 +165,7 @@
 
         <div class="filter-group">
           <label for="sortOrder">Sort Order</label>
-          <select
-            id="sortOrder"
-            name="sortOrder"
-            [(ngModel)]="filters.sortOrder"
-          >
+          <select id="sortOrder" name="sortOrder" [(ngModel)]="filters.sortOrder">
             <option value="asc">Ascending</option>
             <option value="desc">Descending</option>
           </select>
@@ -206,10 +192,9 @@
           Reset Filters
         </button>
       </div>
-
     </div>
 
-    <!-- Loading -->
+    <!-- Course loading -->
     @if (isLoading()) {
       <div class="state-message">
         <div class="loader"></div>
@@ -217,7 +202,6 @@
       </div>
     }
 
-    <!-- Error -->
     @else if (errorMessage()) {
       <div class="state-message error-state">
         <span>⚠️</span>
@@ -228,7 +212,6 @@
       </div>
     }
 
-    <!-- Empty -->
     @else if (courses().length === 0) {
       <div class="state-message empty-state">
         <span>📚</span>
@@ -240,11 +223,9 @@
       </div>
     }
 
-    <!-- Course Data -->
     @else {
       <div class="table-responsive">
         <table class="course-table">
-
           <thead>
             <tr>
               <th>COURSE</th>
@@ -260,7 +241,6 @@
           <tbody>
             @for (course of courses(); track course.courseId) {
               <tr>
-
                 <td>
                   <div class="course-info">
                     <div class="course-avatar">
@@ -285,9 +265,7 @@
 
                 <td>
                   <div class="enrollment-info">
-                    <strong>
-                      {{ course.enrolledCount }} / {{ course.capacity }}
-                    </strong>
+                    <strong>{{ course.enrolledCount }} / {{ course.capacity }}</strong>
                     <div class="progress-track">
                       <div
                         class="progress-fill"
@@ -324,6 +302,14 @@
                   <div class="row-actions">
                     <button
                       type="button"
+                      class="btn-view-enrollments"
+                      (click)="openCourseEnrollments(course)"
+                    >
+                      View Enrollments
+                    </button>
+
+                    <button
+                      type="button"
                       class="btn-secondary"
                       (click)="openEditModal(course)"
                     >
@@ -344,26 +330,22 @@
                     </button>
                   </div>
                 </td>
-
               </tr>
             }
           </tbody>
-
         </table>
       </div>
     }
 
-    <!-- Pagination -->
+    <!-- Course pagination -->
     @if (!isLoading() && !errorMessage() && totalRecords() > 0) {
       <div class="pagination">
-
         <span class="pagination-info">
           Page {{ pageNumber() }} of {{ totalPages() }}
           <span class="total-info">({{ totalRecords() }} courses)</span>
         </span>
 
         <div class="pagination-actions">
-
           <button
             type="button"
             class="page-btn"
@@ -383,7 +365,6 @@
           >
             Next →
           </button>
-
         </div>
       </div>
     }
@@ -393,7 +374,6 @@
   <!-- Add / Edit Course Modal -->
   @if (isModalOpen()) {
     <div class="modal-backdrop" (click)="closeModal()">
-
       <div class="modal-card" (click)="$event.stopPropagation()">
 
         <div class="modal-header">
@@ -436,7 +416,6 @@
           </div>
 
           <div class="form-row">
-
             <div class="form-group">
               <label for="duration">Duration</label>
               <input
@@ -462,7 +441,6 @@
                 required
               />
             </div>
-
           </div>
 
           <div class="form-group">
@@ -489,7 +467,6 @@
           </label>
 
           <div class="modal-actions">
-
             <button
               type="button"
               class="btn-secondary"
@@ -499,16 +476,183 @@
               Cancel
             </button>
 
-            <button
-              type="submit"
-              class="btn-add"
-              [disabled]="isSaving()"
-            >
+            <button type="submit" class="btn-add" [disabled]="isSaving()">
               {{ isSaving() ? 'Saving...' : 'Save Course' }}
             </button>
-
           </div>
         </form>
+      </div>
+    </div>
+  }
+
+  <!-- Course-wise Enrollment Modal -->
+  @if (isEnrollmentModalOpen()) {
+    <div class="modal-backdrop" (click)="closeEnrollmentModal()">
+      <div class="enrollment-modal" (click)="$event.stopPropagation()">
+
+        <div class="enrollment-modal-header">
+          <div>
+            <span class="eyebrow">COURSE ENROLLMENTS</span>
+            <h2>{{ selectedCourse()?.courseName }}</h2>
+            <p>
+              Course ID: #{{ selectedCourse()?.courseId }}
+              · View students enrolled in this course
+            </p>
+          </div>
+
+          <button
+            type="button"
+            class="enrollment-close"
+            (click)="closeEnrollmentModal()"
+            aria-label="Close"
+          >
+            ×
+          </button>
+        </div>
+
+        <!-- Course summary -->
+        <div class="enrollment-summary">
+          <div>
+            <span>Total Enrolled</span>
+            <strong>{{ selectedCourse()?.enrolledCount }}</strong>
+          </div>
+
+          <div>
+            <span>Course Capacity</span>
+            <strong>{{ selectedCourse()?.capacity }}</strong>
+          </div>
+
+          <div>
+            <span>Available Seats</span>
+            <strong>{{ selectedCourse()?.availableSeats }}</strong>
+          </div>
+
+          <div>
+            <span>Course Fees</span>
+            <strong>₹{{ selectedCourse()?.fees | number: '1.0-2' }}</strong>
+          </div>
+        </div>
+
+        <div class="enrollment-list-heading">
+          <div>
+            <h3>Enrolled Students</h3>
+            <p>
+              {{ enrollmentTotalRecords() }} student enrollment record(s)
+            </p>
+          </div>
+        </div>
+
+        @if (isLoadingEnrollments()) {
+          <div class="state-message">
+            <div class="loader"></div>
+            <p>Loading enrolled students...</p>
+          </div>
+        }
+
+        @else if (enrollmentError()) {
+          <div class="state-message error-state">
+            <span>⚠️</span>
+            <p>{{ enrollmentError() }}</p>
+            <button
+              type="button"
+              class="btn-retry"
+              (click)="loadCourseEnrollments()"
+            >
+              Try Again
+            </button>
+          </div>
+        }
+
+        @else if (courseEnrollments().length === 0) {
+          <div class="state-message empty-state">
+            <span>👥</span>
+            <h3>No enrollments yet</h3>
+            <p>No students have enrolled in this course.</p>
+          </div>
+        }
+
+        @else {
+          <div class="enrollment-table-wrapper">
+            <table class="enrollment-table">
+              <thead>
+                <tr>
+                  <th>STUDENT</th>
+                  <th>EMAIL ADDRESS</th>
+                  <th>ENROLLMENT DATE</th>
+                  <th>STATUS</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                @for (enrollment of courseEnrollments(); track enrollment.enrollmentId) {
+                  <tr>
+                    <td>
+                      <div class="enrolled-student">
+                        <div class="student-avatar">
+                          {{ enrollment.studentName.charAt(0).toUpperCase() }}
+                        </div>
+                        <div>
+                          <strong>{{ enrollment.studentName }}</strong>
+                          <small>Student ID: #{{ enrollment.studentId }}</small>
+                        </div>
+                      </div>
+                    </td>
+
+                    <td class="student-email">
+                      {{ enrollment.studentEmail }}
+                    </td>
+
+                    <td>
+                      {{ enrollment.enrolledAt | date: 'dd MMM yyyy' }}
+                    </td>
+
+                    <td>
+                      <span class="enrollment-status">
+                        {{ getEnrollmentStatus(enrollment.status) }}
+                      </span>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+          @if (enrollmentTotalPages() > 1) {
+            <div class="enrollment-pagination">
+              <span>
+                Page {{ enrollmentPage() }} of {{ enrollmentTotalPages() }}
+              </span>
+
+              <div>
+                <button
+                  type="button"
+                  (click)="previousEnrollmentPage()"
+                  [disabled]="enrollmentPage() === 1"
+                >
+                  ← Previous
+                </button>
+
+                <button
+                  type="button"
+                  (click)="nextEnrollmentPage()"
+                  [disabled]="enrollmentPage() >= enrollmentTotalPages()"
+                >
+                  Next →
+                </button>
+              </div>
+            </div>
+          }
+        }
+
+        <div class="enrollment-modal-footer">
+          <button
+            type="button"
+            class="btn-secondary"
+            (click)="closeEnrollmentModal()"
+          >
+            Close
+          </button>
+        </div>
 
       </div>
     </div>

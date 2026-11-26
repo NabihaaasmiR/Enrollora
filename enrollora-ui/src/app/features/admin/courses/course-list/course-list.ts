@@ -10,6 +10,9 @@ import {
   CourseFilter
 } from '../course.models';
 
+import { EnrollmentService } from '../../../enrollments/enrollment.service';
+import { EnrollmentResponse } from '../../../enrollments/enrollment.models';
+
 @Component({
   selector: 'app-course-list',
   standalone: true,
@@ -19,22 +22,23 @@ import {
 })
 export class CourseListComponent implements OnInit {
   private courseService = inject(CourseService);
+  private enrollmentService = inject(EnrollmentService);
 
   // Course data
   courses = signal<CourseResponse[]>([]);
   isLoading = signal(false);
   errorMessage = signal('');
 
-  // Pagination
+  // Course pagination
   pageNumber = signal(1);
   pageSize = signal(10);
   totalRecords = signal(0);
   totalPages = signal(0);
 
-  // Course filters and sorting
+  // Course filters
   filters: CourseFilter = this.createDefaultFilters();
 
-  // Modal and form
+  // Add/Edit course modal
   isModalOpen = signal(false);
   isSaving = signal(false);
   formError = signal('');
@@ -43,21 +47,29 @@ export class CourseListComponent implements OnInit {
 
   formModel: SaveCourseRequest = this.createEmptyForm();
 
+  // Course-wise enrollment modal
+  isEnrollmentModalOpen = signal(false);
+  selectedCourse = signal<CourseResponse | null>(null);
+  courseEnrollments = signal<EnrollmentResponse[]>([]);
+  isLoadingEnrollments = signal(false);
+  enrollmentError = signal('');
+
+  enrollmentPage = signal(1);
+  enrollmentPageSize = 8;
+  enrollmentTotalRecords = signal(0);
+  enrollmentTotalPages = signal(0);
+
   ngOnInit(): void {
     this.loadCourses();
   }
 
-  // Load courses with filters, sorting and pagination
+  // Load courses
   loadCourses(): void {
     this.isLoading.set(true);
     this.errorMessage.set('');
 
     this.courseService
-      .getCourses(
-        this.pageNumber(),
-        this.pageSize(),
-        this.filters
-      )
+      .getCourses(this.pageNumber(), this.pageSize(), this.filters)
       .subscribe({
         next: (response) => {
           this.courses.set(response.items);
@@ -73,20 +85,17 @@ export class CourseListComponent implements OnInit {
       });
   }
 
-  // Apply selected filters
   applyFilters(): void {
     this.pageNumber.set(1);
     this.loadCourses();
   }
 
-  // Reset all filters
   resetFilters(): void {
     this.filters = this.createDefaultFilters();
     this.pageNumber.set(1);
     this.loadCourses();
   }
 
-  // Default filter values
   private createDefaultFilters(): CourseFilter {
     return {
       search: '',
@@ -101,7 +110,7 @@ export class CourseListComponent implements OnInit {
     };
   }
 
-  // Open add course modal
+  // Add course
   openAddModal(): void {
     this.editingCourseId.set(null);
     this.formModel = this.createEmptyForm();
@@ -109,7 +118,7 @@ export class CourseListComponent implements OnInit {
     this.isModalOpen.set(true);
   }
 
-  // Open edit course modal
+  // Edit course
   openEditModal(course: CourseResponse): void {
     this.editingCourseId.set(course.courseId);
 
@@ -125,7 +134,6 @@ export class CourseListComponent implements OnInit {
     this.isModalOpen.set(true);
   }
 
-  // Close course modal
   closeModal(): void {
     if (this.isSaving()) {
       return;
@@ -144,34 +152,22 @@ export class CourseListComponent implements OnInit {
     const capacity = Number(this.formModel.capacity);
 
     if (!courseName || courseName.length > 150) {
-      this.formError.set(
-        'Course name is required (max 150 characters).'
-      );
+      this.formError.set('Course name is required (max 150 characters).');
       return;
     }
 
     if (!duration || duration.length > 80) {
-      this.formError.set(
-        'Duration is required (max 80 characters).'
-      );
+      this.formError.set('Duration is required (max 80 characters).');
       return;
     }
 
     if (Number.isNaN(fees) || fees < 0 || fees > 999999999) {
-      this.formError.set(
-        'Fees must be between 0 and 999,999,999.'
-      );
+      this.formError.set('Fees must be between 0 and 999,999,999.');
       return;
     }
 
-    if (
-      !Number.isInteger(capacity) ||
-      capacity < 1 ||
-      capacity > 100000
-    ) {
-      this.formError.set(
-        'Capacity must be a whole number from 1 to 100,000.'
-      );
+    if (!Number.isInteger(capacity) || capacity < 1 || capacity > 100000) {
+      this.formError.set('Capacity must be a whole number from 1 to 100,000.');
       return;
     }
 
@@ -188,10 +184,9 @@ export class CourseListComponent implements OnInit {
 
     const editingId = this.editingCourseId();
 
-    const request$ =
-      editingId !== null
-        ? this.courseService.updateCourse(editingId, payload)
-        : this.courseService.createCourse(payload);
+    const request$ = editingId !== null
+      ? this.courseService.updateCourse(editingId, payload)
+      : this.courseService.createCourse(payload);
 
     request$.subscribe({
       next: () => {
@@ -208,12 +203,12 @@ export class CourseListComponent implements OnInit {
       error: (error) => {
         console.error('Error saving course:', error);
 
-        const backendMessage =
+        this.formError.set(
           error?.error?.detail ||
           error?.error?.title ||
-          'Unable to save course.';
+          'Unable to save course.'
+        );
 
-        this.formError.set(backendMessage);
         this.isSaving.set(false);
       },
     });
@@ -221,10 +216,7 @@ export class CourseListComponent implements OnInit {
 
   // Deactivate course
   deactivateCourse(course: CourseResponse): void {
-    if (
-      !course.isActive ||
-      this.deactivatingCourseId() !== null
-    ) {
+    if (!course.isActive || this.deactivatingCourseId() !== null) {
       return;
     }
 
@@ -239,34 +231,105 @@ export class CourseListComponent implements OnInit {
       error: (error) => {
         console.error('Error deactivating course:', error);
 
-        const backendMessage =
+        this.errorMessage.set(
           error?.error?.detail ||
           error?.error?.title ||
-          'Unable to deactivate course.';
+          'Unable to deactivate course.'
+        );
 
-        this.errorMessage.set(backendMessage);
         this.deactivatingCourseId.set(null);
       },
     });
   }
 
-  // Next page
+  // Open course-wise enrollment modal
+  openCourseEnrollments(course: CourseResponse): void {
+    this.selectedCourse.set(course);
+    this.isEnrollmentModalOpen.set(true);
+    this.enrollmentPage.set(1);
+    this.loadCourseEnrollments();
+  }
+
+  // Load enrollments for selected course
+  loadCourseEnrollments(): void {
+    const course = this.selectedCourse();
+
+    if (!course) {
+      return;
+    }
+
+    this.isLoadingEnrollments.set(true);
+    this.enrollmentError.set('');
+
+    this.enrollmentService
+      .getEnrollmentsByCourse(
+        course.courseId,
+        this.enrollmentPage(),
+        this.enrollmentPageSize
+      )
+      .subscribe({
+        next: (response) => {
+          this.courseEnrollments.set(response.items);
+          this.enrollmentTotalRecords.set(response.totalRecords);
+          this.enrollmentTotalPages.set(response.totalPages);
+          this.isLoadingEnrollments.set(false);
+        },
+        error: (error) => {
+          console.error('Error loading course enrollments:', error);
+
+          this.enrollmentError.set(
+            error?.error?.detail ||
+            error?.error?.title ||
+            'Unable to load enrollments for this course.'
+          );
+
+          this.isLoadingEnrollments.set(false);
+        },
+      });
+  }
+
+  nextEnrollmentPage(): void {
+    if (this.enrollmentPage() < this.enrollmentTotalPages()) {
+      this.enrollmentPage.update(page => page + 1);
+      this.loadCourseEnrollments();
+    }
+  }
+
+  previousEnrollmentPage(): void {
+    if (this.enrollmentPage() > 1) {
+      this.enrollmentPage.update(page => page - 1);
+      this.loadCourseEnrollments();
+    }
+  }
+
+  closeEnrollmentModal(): void {
+    this.isEnrollmentModalOpen.set(false);
+    this.selectedCourse.set(null);
+    this.courseEnrollments.set([]);
+    this.enrollmentError.set('');
+    this.enrollmentPage.set(1);
+  }
+
+  // Display enrollment status as returned by the API
+  getEnrollmentStatus(status: number): string {
+    return String(status);
+  }
+
+  // Course pagination
   nextPage(): void {
     if (this.pageNumber() < this.totalPages()) {
-      this.pageNumber.update((page) => page + 1);
+      this.pageNumber.update(page => page + 1);
       this.loadCourses();
     }
   }
 
-  // Previous page
   previousPage(): void {
     if (this.pageNumber() > 1) {
-      this.pageNumber.update((page) => page - 1);
+      this.pageNumber.update(page => page - 1);
       this.loadCourses();
     }
   }
 
-  // Empty course form
   private createEmptyForm(): SaveCourseRequest {
     return {
       courseName: '',
